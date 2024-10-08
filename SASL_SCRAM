@@ -1,1 +1,49 @@
 
+Add below config in server.properties
+
+listeners=SSL://kafka:9094,PLAINTEXT://kafka:9092,SASL_SSL://kafka:9095
+advertised.listeners=SSL://kafka:9094,PLAINTEXT://kafka:9092,SASL_SSL://kafka:9095
+
+
+ssl.truststore.location=/home/ec2-user/security/kafka.server.truststore.jks
+ssl.truststore.password=test1234
+ssl.keystore.location=/home/ec2-user/security/kafka.server.keystore.jks
+ssl.keystore.password=test1234
+ssl.key.password=test1234
+
+security.inter.broker.protocol=SASL_SSL
+ssl.client.auth=required
+#sasl.enabled.mechanisms=PLAIN,DIGEST-MD5
+#sasl.mechanism.inter.broker.protocol=PLAIN
+sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
+sasl.enabled.mechanisms=SCRAM-SHA-256
+sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
+
+listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+
+
+
+Run the below command to store the password in ZK 
+
+kafka-configs --bootstrap-server localhost:9092 --alter \
+  --add-config 'SCRAM-SHA-256=[iterations=8192,password=alice-secret],SCRAM-SHA-512=[password=alice-secret]' \
+  --entity-type users \
+  --entity-name alice
+
+kafka-configs --bootstrap-server localhost:9092 --alter \
+  --add-config 'SCRAM-SHA-256=[password=admin-secret],SCRAM-SHA-512=[password=admin-secret]'
+  --entity-type users \
+  --entity-name admin
+
+
+
+
+cat client.properties 
+ssl.truststore.location=/home/ec2-user/security/kafka.server.truststore.jks
+ssl.truststore.password=test1234
+ssl.keystore.location=/home/ec2-user/security/kafka.server.keystore.jks
+ssl.keystore.password=test1234
+ssl.key.password=test1234
+security.protocol=SASL_SSL
+sasl.mechanism=SCRAM-SHA-256
+sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin"  password="admin-secret";
