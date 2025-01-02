@@ -22,6 +22,8 @@ sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
 listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
 
 
+## You may get this error "org.apache.kafka.common.errors.SaslAuthenticationException: Authentication failed during authentication due to invalid credentials with SASL mechanism SCRAM-SHA-256
+"  id don't add the below one:
 
 Run the below command to store the password in ZK 
 
